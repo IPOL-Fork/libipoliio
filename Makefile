@@ -4,7 +4,7 @@
 
 LIBIPOLN=libipoliio.so
 LIBIPOLV=0
-LIBIPOLD=20130706
+LIBIPOLD=20220720
 ##
 # The following three statements determine the build configuration.
 # For handling different image formats, the program can be linked with
@@ -18,9 +18,13 @@ LDLIBTIFF=-ltiff
 ##
 # Standard make settings
 SHELL=/bin/sh
-CFLAGS=-O3 -ansi -pedantic -Wall -Wextra
+CFLAGS=-O3 -ansi -pedantic -Wall -Wextra -Isrc
 LDFLAGS=
 LDLIBS=-lm $(LDLIBJPEG) $(LDLIBPNG) $(LDLIBTIFF)
+
+ifneq ($(shell uname -m), i386)
+    CFLAGS += -fPIC
+endif
 
 ##
 # These statements add compiler flags to define USE_LIBJPEG, etc.,
@@ -40,8 +44,9 @@ ALLCFLAGS=$(CFLAGS) $(CJPEG) $(CPNG) $(CTIFF)
 LIBIPOL_SOURCES=basic.c imageio.c
 
 ARCHIVENAME=$(LIBIPOLN)_$(shell date -u +%Y%m%d)
-SOURCES=basic.c basic.h imageio.c imageio.h LICENSE Makefile
-LIBIPOL_OBJECTS=$(LIBIPOL_SOURCES:.c=.o)
+SOURCES=src/basic.c src/basic.h src/imageio.c src/imageio.h LICENSE Makefile
+# LIBIPOL_OBJECTS=$(LIBIPOL_SOURCES:.c=.o)
+LIBIPOL_OBJECTS=src/basic.o src/imageio.o
 .SUFFIXES: .c .o
 .PHONY: all clean rebuild dist dist-zip
 
